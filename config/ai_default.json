@@ -1,0 +1,37 @@
+{
+  "_comment": "╔══════════════════════════════════════════════════════════════════╗",
+  "_comment2": "║  AI-trace AI 分析选项配置文件 (AI1 / AI2 / ...)                ║",
+  "_comment3": "║  优先级: 运行时手动输入 > 本文件 > 各 AI 脚本内置默认值        ║",
+  "_comment4": "╚══════════════════════════════════════════════════════════════════╝",
+
+  "ai_stall_analysis": {
+    "_note": "AI1 — IO 卡顿快速分析 (阻塞 IO 根因拆解)",
+    "_note_window": "pre_ms/post_ms 为卡顿点分析窗口: 回车用此默认值, 也可手动输入覆盖",
+
+    "trace": "com.ss.android.ugc.aweme",
+    "start_ns": 237866030786798,
+    "duration_ns": 3840677,
+    "process": "com.ss.android.ugc.aweme",
+    "pid": "14831",
+    "tid": "14831",
+
+    "pre_ms": 50,
+    "post_ms": 200,
+
+    "ai": true,
+    "ai_model": "deep",
+
+    "_examples": {
+      "_eg1": "\"pre_ms\": 50, \"post_ms\": 200  → 前 50ms / 后 200ms 分析窗口",
+      "_eg2": "\"pre_ms\": 20, \"post_ms\": 150  → 更窄窗口, 减少统计噪声"
+    }
+  },
+
+  "ai_chat": {
+    "_note": "AI2 — IO 报告 AI 问答 (围绕 trace 分析结果持续对话)",
+    "_note_model": "model: fast=deepseek-chat (快速对话, 推荐) / deep=deepseek-reasoner (深度推理)",
+
+    "trace": "com.ss.android.ugc.aweme",
+    "model": "fast"
+  }
+}

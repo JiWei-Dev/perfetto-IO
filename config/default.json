@@ -1,0 +1,136 @@
+{
+  "_global_comment": "╔══════════════════════════════════════════════════════════════════╗",
+  "_global_comment2": "║  AI-trace 默认配置文件                                          ║",
+  "_global_comment3": "║  CLI 命令行参数 > 配置文件 (本文件) > 各脚本内置默认值          ║",
+  "_global_comment4": "╚══════════════════════════════════════════════════════════════════╝",
+
+  "_format_guide": "══════════ 格式说明 ══════════",
+  "_format_ns": "  纳秒值可直接从 Perfetto UI 时间轴复制: 右键时间戳 → Copy raw value",
+  "_format_sec": "  秒值 = 纳秒 / 1_000_000_000，例: 237866.030787 秒",
+  "_format_pairs": "  --pairs 每组格式: start_ns:end_ns，多组用空格分隔",
+  "_format_sheet": "  sheet: 全部 IO = 全量事件, 时间范围 IO = 仅 --start/--end 范围内的事件",
+  "_format_pcap": "  pcap: 99.9 表示图表横坐标截断到 P99.9，即只显示前 99.9% 的数据",
+
+  "trace_name": "com.ss.android.ugc.aweme",
+
+  "parse_block_io": {
+    "_note": "步骤 2 — 从 trace 提取 Block IO 事件到 XLSX/CSV 表格",
+    "_note_timerange": "start_ns/end_ns 和 start/end 二选一，纳秒优先。两者指向同一时刻即可",
+
+    "start_ns": 237863509246000,
+    "end_ns": 237870000743000,
+
+    "start": null,
+    "end": null,
+
+    "timeout": 900,
+    "_timeout_note": "整体执行超时秒数（含 SQL 查询与 Excel 保存），百万行级 Excel 建议 ≥ 1200",
+
+    "_examples": {
+      "_eg1": "\"start_ns\": 237863509246000, \"end_ns\": 237870000743000 → com.ss.android.ugc.aweme 全程",
+      "_eg2": "\"start\": 237863.509, \"end\": 237870.001                      → 秒值等效写法"
+    }
+  },
+
+  "split_trace": {
+    "_note": "步骤 3 — 将超大 trace (>1GB) 按指定时间片段切分为多份独立表格",
+    "_note_usage": "在终端运行速度更快 (trace_processor_shell 加载约 3-5 分钟)，IDE 环境可能超时",
+    "_note_pairs": "pairs 中每组为一对 start:end 纳秒时间戳，输出文件名为 {trace}_{start}_{end}_block_io.{csv/xlsx}",
+
+    "pairs": [
+      "237863509246000:237865500000000",
+      "237865500000000:237867500000000",
+      "237867500000000:237870000743000"
+    ],
+
+    "format": "csv",
+    "_format_choices": "\"csv\" = 仅 CSV (最快), \"xlsx\" = 仅 XLSX (带格式), \"both\" = 同时输出 (默认)",
+
+    "timeout": 900,
+    "_timeout_note": "trace_processor_shell 超时秒数，1.9GB trace 建议 ≥ 600",
+
+    "_examples": {
+      "_eg1": "\"pairs\": [\"237863509246000:237865500000000\"]               → 单个片段",
+      "_eg2": "\"pairs\": [\"A:B\", \"C:D\", \"E:F\"]                         → 三个片段",
+      "_eg3": "\"format\": \"csv\"                                           → 仅输出 CSV，后续脚本可直读"
+    }
+  },
+
+  "io_latency_chart": {
+    "_note": "步骤 4 — 计算调度耗时 (insert→issue) 与器件耗时 (issue→complete)，绘图 + 写 latency.xlsx",
+
+    "sheet": "时间范围 IO",
+    "pcap": 99.9,
+
+    "_examples": {
+      "_eg1": "\"sheet\": \"全部 IO\"    → 分析全量事件",
+      "_eg2": "\"sheet\": \"时间范围 IO\" → 仅分析 parse_block_io 过滤的时间段",
+      "_eg3": "\"pcap\": 99.9            → 横坐标截断到 P99.9，极端长尾不显示",
+      "_eg4": "\"pcap\": null            → 不截断，显示全部数据（长尾可能很宽）"
+    }
+  },
+
+  "io_size_chart": {
+    "_note": "步骤 5 — 按扇区数量和 IO 大小 (KB) 统计读写分布，绘图 + 追加 latency.xlsx",
+
+    "sheet": "时间范围 IO",
+
+    "_examples": {
+      "_eg1": "\"sheet\": \"全部 IO\" → 统计全量事件的 IO 大小分布"
+    }
+  },
+
+  "io_process_stats": {
+    "_note": "步骤 6 — 按进程/线程统计 block_rq_insert 事件的读写数量和数据量，追加到 latency.xlsx",
+
+    "sheet": "时间范围 IO",
+
+    "_examples": {
+      "_eg1": "\"sheet\": \"全部 IO\" → 统计全量进程 IO 贡献"
+    }
+  },
+
+  "pid_io_analysis": {
+    "_note": "步骤 7 — 针对指定进程 PID 或线程 TID 做独立的 4 维度 IO 分析",
+    "_note_pid_tid": "pid 和 tid 二选一，同时为 null 时会跳过此步骤",
+
+    "pid": "14831",
+    "tid": null,
+    "sheet": "全部 IO",
+    "pcap": 99.9,
+    "start": null,
+    "end": null,
+
+    "_examples": {
+      "_eg1": "\"pid\": \"14831\", \"tid\": null    → 分析 PID=14831 进程的所有 IO",
+      "_eg2": "\"pid\": null, \"tid\": \"18828\"   → 分析 TID=18828 线程的 IO",
+      "_eg3": "\"pid\": \"14831\", \"pcap\": 95.0    → P95 截断（更激进地剔尾）",
+      "_eg4": "\"pid\": null, \"tid\": \"14831,18828\" → 同时分析多个线程 (同一时间段)"
+    }
+  },
+
+  "io_diagnosis": {
+    "_note": "步骤 8 — IO 综合诊断: 队列深度/IOPS/百分位/读写分离/顺序随机/慢IO/同步异步",
+    "_note_timerange": "start_ns/end_ns 纳秒优先于 start/end 秒",
+
+    "sheet": "时间范围 IO",
+
+    "start_ns": null,
+    "end_ns": null,
+    "start": null,
+    "end": null,
+
+    "bucket": 1,
+    "_bucket_note": "IOPS / 吞吐量 时间分桶间隔 (秒)。0.1=100ms 高精度, 1=粗粒度看趋势",
+
+    "top_n": 20,
+    "_top_n_note": "慢 IO Top-N 排行数量",
+
+    "_examples": {
+      "_eg1": "\"bucket\": 0.1  → 100ms 精度看 IOPS 毛刺",
+      "_eg2": "\"bucket\": 1    → 1 秒粗粒度看整体趋势",
+      "_eg3": "\"top_n\": 30    → 显示前 30 条慢 IO",
+      "_eg4": "\"start_ns\": 237863509246000, \"end_ns\": 237870000743000"
+    }
+  }
+}

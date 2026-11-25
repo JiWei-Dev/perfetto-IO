@@ -1,0 +1,62 @@
+{
+  "trace_file": "com.ss.android.ugc.aweme.perfetto-trace",
+  "trace_name": "com.ss.android.ugc.aweme",
+  "out_dir": "D:\\debug-work\\block-io\\AI-trace\\out\\com.ss.android.ugc.aweme",
+  "start": "237865.883537319",
+  "end": "237867.876974818",
+  "2_timeout": "900",
+  "2_params": {
+    "--start": "237865.883537319",
+    "--end": "237867.876974818",
+    "--timeout": "900"
+  },
+  "2_done": true,
+  "4_sheet": "时间范围 IO",
+  "4_pcap": "99.1",
+  "4_params": {
+    "--sheet": "时间范围 IO",
+    "--pcap": "99.1"
+  },
+  "4_done": true,
+  "5_sheet": "时间范围 IO",
+  "5_params": {
+    "--sheet": "时间范围 IO"
+  },
+  "5_done": true,
+  "6_sheet": "时间范围 IO",
+  "6_params": {
+    "--sheet": "时间范围 IO"
+  },
+  "6_done": true,
+  "7_tid": "",
+  "7_pid": "14831",
+  "7_sheet": "时间范围 IO",
+  "7_pcap": "99.9",
+  "7_params": {
+    "--pid": "14831",
+    "--start": "237865.883537319",
+    "--end": "237867.876974818",
+    "--sheet": "时间范围 IO",
+    "--pcap": "99.9"
+  },
+  "7_done": true,
+  "8_bucket": "0.1",
+  "8_sheet": "时间范围 IO",
+  "8_top-n": "40",
+  "8_params": {
+    "--start": "237865.883537319",
+    "--end": "237867.876974818",
+    "--bucket": "0.1",
+    "--sheet": "时间范围 IO",
+    "--top-n": "40"
+  },
+  "8_done": true,
+  "9_params": {},
+  "9_done": true,
+  "AI1_start": "237866030786798",
+  "AI1_duration": "3840677",
+  "AI1_pre-ms": "50",
+  "AI1_post-ms": "50",
+  "AI1_ai": "y",
+  "AI1_done": true
+}

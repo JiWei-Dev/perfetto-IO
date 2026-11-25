@@ -1,0 +1,8 @@
+目标 IO 定位 sector=34246240 dev=8:0
+
+== 目标线程相关事件 (按时间) ==
+
+== START 时刻 in-flight 请求 (0) ==
+
+== 堆积请求 (insert<=START<issue, 1) ==
+sector=34246240 ins=-15.8us issue=+3746.0us complete=+3833.3us rw=R (Read) bytes=4096
